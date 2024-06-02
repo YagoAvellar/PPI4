@@ -19,7 +19,10 @@ let products = [];
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middleware para verificar se o usuário está logado
+// Servir arquivos estáticos da pasta "paginas"
+app.use(express.static(path.join(__dirname, 'paginas')));
+
+// Middleware para verificar login
 function checkLogin(req, res, next) {
   if (req.session.user) {
     next();
@@ -28,12 +31,29 @@ function checkLogin(req, res, next) {
   }
 }
 
-// Rota para exibir o formulário de login
+app.get('/', (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Menu do sistema</title>
+    </head>
+    <body>
+      <h1>Menu</h1>
+      <ul>
+        <li><a href="/product-form">Cadastrar novos produtos</a></li>
+        <li><a href="/products">Listar Produtos</a></li>
+      </ul>
+    </body>
+    </html>
+  `);
+});
+
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
-// Rota para processar o login
 app.post('/login', (req, res) => {
   const { username } = req.body;
   if (username) {
@@ -45,7 +65,6 @@ app.post('/login', (req, res) => {
   }
 });
 
-// Rota para exibir o formulário de cadastro de produtos
 app.get('/products', checkLogin, (req, res) => {
   res.render('products', {
     user: req.session.user,
@@ -54,12 +73,10 @@ app.get('/products', checkLogin, (req, res) => {
   });
 });
 
-// Rota para exibir o formulário de cadastro de produto
 app.get('/product-form', checkLogin, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'product-form.html'));
 });
 
-// Rota para processar o cadastro de produto
 app.post('/product-form', checkLogin, (req, res) => {
   const { barcode, description, costPrice, salePrice, expiryDate, stockQty, manufacturer } = req.body;
   const newProduct = { barcode, description, costPrice, salePrice, expiryDate, stockQty, manufacturer };
@@ -67,8 +84,9 @@ app.post('/product-form', checkLogin, (req, res) => {
   res.redirect('/products');
 });
 
-// Iniciando o servidor
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
+
+module.exports = app;
