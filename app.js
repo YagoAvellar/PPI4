@@ -34,19 +34,21 @@ function checkLogin(req, res, next) {
 app.get('/', (req, res) => {
   res.send(`
     <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <title>Menu do sistema</title>
-    </head>
-    <body>
-      <h1>Menu</h1>
-      <ul>
-        <li><a href="/product-form">Cadastrar novos produtos</a></li>
-        <li><a href="/products">Listar Produtos</a></li>
-      </ul>
-    </body>
-    </html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+</head>
+<body>
+  <h1>Login</h1>
+  <form action="/login" method="post">
+    <label for="username">Nome de Usuário:</label>
+    <input type="text" id="username" name="username" required>
+    <button type="submit">Login</button>
+  </form>
+</body>
+</html>
   `);
 });
 
